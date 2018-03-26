@@ -9,44 +9,54 @@ import model.Pais;
 
 public class paisDAO {
 	
-
-		public int criar(Pais pais) {
-			String sql = "INSERT INTO Pais(id, nome, populacao, area) VALUES (?, ?, ?, ?)";
+		public void incluir(Pais pais) {
+			String sqlInsert = "INSERT INTO cliente(id, nome, fone) VALUES (?, ?, ?)";
+		// usando o try with resources do Java 7, que fecha o que abriu
 			try (Connection conn = ConnectionFactory.obtemConexao();
-				PreparedStatement stm = conn.prepareStatement(sql);) {
-				stm.setString(1, pais.getNome());
-				stm.setLong  (2, pais.getPopulacao());
-				stm.setDouble(3, pais.getArea());
-			   stm.execute();
-				} catch (SQLException e) {
-				e.printStackTrace();
-			    }
-			return pais.getId();
-		}
-
-		public void atualizar(Pais pais) {
-			String sql = "UPDATE Pais SET nome=?, area=?, populacao=? WHERE id=?";
-			try (Connection conn = ConnectionFactory.obtemConexao();
-				PreparedStatement stm = conn.prepareStatement(sql);) {
-				stm.setString(1, pais.getNome());
-				stm.setLong  (2, pais.getPopulacao());
-				stm.setDouble(3, pais.getArea());
-			    stm.execute();
-				} catch (Exception e) {
-				e.printStackTrace();
-			    }
-		}
-	
-		public void excluir(int id){
-			String sql = "DELETE FROM Pais WHERE id = ?";
-			try (Connection conn = ConnectionFactory.obtemConexao();
-			PreparedStatement stm = conn.prepareStatement(sql);) {
-				stm.setInt   (1, id);
-				stm.execute  ();
-			}catch(SQLException e){
-				e.printStackTrace();
+			PreparedStatement stm = conn.prepareStatement(sqlInsert);) {
+			stm.setInt(1, pais.getId());
+			stm.setString(2, pais.getNome());
+			stm.setLong(3, pais.getPopulacao());
+			stm.setDouble(4, pais.getArea());
+			
+			stm.execute();
+			} catch (SQLException e) {
+			e.printStackTrace();
 			}
 		}
+
+
+
+		public void atualizar(Pais pais) {
+			String sqlUpdate = "UPDATE cliente SET nome=?, fone=? WHERE id=?";
+		// usando o try with resources do Java 7, que fecha o que abriu
+			try (Connection conn = ConnectionFactory.obtemConexao();
+			PreparedStatement stm = conn.prepareStatement(sqlUpdate);) {
+			stm.setString(1, pais.getNome());
+			stm.setLong(2, pais.getPopulacao());
+			stm.setDouble(2, pais.getArea());
+			
+			stm.setInt(4, pais.getId());
+			stm.execute();
+			} catch (Exception e) {
+			e.printStackTrace();
+			}
+		}
+
+	
+		public void excluir(Pais pais) {
+			
+			String sqlDelete = "DELETE FROM cliente WHERE id = ?";
+			// usando o try with resources do Java 7, que fecha o que abriu
+			try (Connection conn = ConnectionFactory.obtemConexao();
+			PreparedStatement stm = conn.prepareStatement(sqlDelete);) {
+			stm.setInt(1, pais.getId());
+			stm.execute();
+			} catch (Exception e) {
+			e.printStackTrace();
+			}
+		}
+
 		
 		public Pais carregar(int id) {
 			Pais pais = new Pais();
@@ -54,17 +64,17 @@ public class paisDAO {
 			String sqlSelect = "SELECT nome, populacao, area FROM cliente WHERE cliente.id = ?";
 			try (Connection conn = ConnectionFactory.obtemConexao();
 			   PreparedStatement stm = conn.prepareStatement(sqlSelect);) {
-			   stm.setInt(1, getId());
+			   stm.setInt(1, pais.getId());
 			try (ResultSet rs = stm.executeQuery();) {
 				if (rs.next()) {
-					setNome(rs.getString("nome"));
-					setPopulacao(rs.getLong("populacao"));
-					setArea(rs.getDouble("area"));
+					pais.setNome(rs.getString("nome"));
+					pais.setPopulacao(rs.getLong("populacao"));
+					pais.setArea(rs.getDouble("area"));
 					} else {
-					setId(-1);
-					setNome(null);
-					setPopulacao(-1);
-					setArea(-1);
+					pais.setId(-1);
+					pais.setNome(null);
+					pais.setPopulacao(-1);
+					pais.setArea(-1);
 				}
 			} catch (SQLException e) {
 			e.printStackTrace();
@@ -74,23 +84,19 @@ public class paisDAO {
 			}
 			return pais;
 	    }
-			
-		private int getId() {
-			// TODO Auto-generated method stub
-			return 0;
-		}
 
 		//maiorPopulacao
-		public void maiorPopulacao() {
+		public void maiorPopulacao(long populacao) {
+			Pais pais = new Pais();
 			String sql = "SELECT * FROM Pais WHERE populacao = (SELECT MAX(populacao) FROM Pais)";
 			try (Connection conn = ConnectionFactory.obtemConexao()){
 				PreparedStatement stm = conn.prepareStatement(sql);	
 				ResultSet rs = stm.executeQuery();
 				if(rs.next()) {
-					setNome(rs.getString    ("nome"));
-					setPopulacao(rs.getLong ("populacao"));
-					setId(rs.getInt         ("id"));
-					setArea(rs.getDouble    ("area"));
+					pais.setNome(rs.getString    ("nome"));
+					pais.setPopulacao(rs.getLong ("populacao"));
+					pais.setId(rs.getInt         ("id"));
+					pais.setArea(rs.getDouble    ("area"));
 				}else {
 					System.out.println("Error Result Set");
 				}
@@ -99,23 +105,19 @@ public class paisDAO {
 				System.out.println(e);
 			}
 		}
-		
-		private void setNome(String string) {
-			// TODO Auto-generated method stub
-			
-		}
 
 		//menorArea
-		public void menorArea() {
+		public void menorArea(double area) {
+			Pais pais = new Pais();
 			String get = "SELECT * FROM pais WHERE area = (SELECT Min(area) FROM Pais)";
 			try (Connection conn = ConnectionFactory.obtemConexao()){
 				PreparedStatement stm = conn.prepareStatement(get);
 				ResultSet rs = stm.executeQuery();
 				if(rs.next()) {
-					setNome(rs.getString    ("nome"));
-					setPopulacao(rs.getLong ("populacao"));
-					setId(rs.getInt			("id"));
-					setArea(rs.getDouble    ("area"));
+					pais.setNome(rs.getString    ("nome"));
+					pais.setPopulacao(rs.getLong ("populacao"));
+					pais.setId(rs.getInt			("id"));
+					pais.setArea(rs.getDouble    ("area"));
 				}else {
 					System.out.println("ERROR RESULT SET");
 				}
@@ -123,24 +125,9 @@ public class paisDAO {
 				System.out.println(e);
 			}
 		}
-		
-		private void setArea(double double1) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		private void setId(int int1) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		private void setPopulacao(long long1) {
-			// TODO Auto-generated method stub
-			
-		}
 
 		//vetorTresPaises
-		public String[] vetorTresPaises() {	
+		public String[] vetorTresPaises(Pais pais) {	
 			String get = "SELECT nome FROM paises ORDER BY nome";
 			String[] array = new String[3];
 			int cont = 0 ;

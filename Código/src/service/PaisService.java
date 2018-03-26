@@ -1,35 +1,37 @@
 package service;
 
 import model.Pais;
-import dao.PaisDAO;
+import dao.paisDAO;
 
 
 public class PaisService {
-	PaisDAO dao = new PaisDAO();
 	
-	public int criar(Pais pais) {
-		return dao.criar(pais);
+	paisDAO dao = new paisDAO();
+	
+	public void criar(Pais pais) {
+		dao.incluir(pais);
 	}
-	
-	public void atualizar(Pais pais){
+	public void atualizar(Pais pais) {
 		dao.atualizar(pais);
 	}
-	
-	public void excluir(int id){
-		dao.excluir(id);
+	public void excluir(Pais pais) {
+		dao.excluir(pais);
 	}
-	
-	public Pais carregar(int id){
-		return dao.carregar(id);
+	public Pais carregar(int id) {
+		Pais pais = dao.carregar(id);
+		return pais;
 	}
 
-	public void maiorPopulacao (long populacao) {
+	public long maiorPopulacao (long populacao) {
 		
-		return dao.maiorPopulacao(populacao);
+		 dao.maiorPopulacao(populacao);
+		 return populacao;
 	}
 	
-	public void menorArea (double area) {
-		return dao.menorArea(area);
+	public double menorArea (double area) {
+		
+		 dao.menorArea(area);
+		 return area;
 	}
 	
 	public String[] vetorTresPaises (Pais pais) {
